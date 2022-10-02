@@ -27,4 +27,4 @@ helm package charts/nexus-iq --destination docs
 
 # index the existing tgz archives
 cd docs
-helm repo index . --url https://sonatype.github.io/helm3-charts
+helm repo index . --url https://bigspotteddog.github.io/helm3-charts
