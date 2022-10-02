@@ -28,7 +28,7 @@ tests:
           value: Recreate
       - matchRegex:
           path: spec.template.spec.containers[0].image
-          pattern: sonatype/nexus-iq-server:1\.\d+\.\d+
+          pattern: bigspotteddog/nexus-iq-server:1\.\d+\.\d+
       - equal:
           path: spec.template.spec.containers[0].securityContext
           value: {}
