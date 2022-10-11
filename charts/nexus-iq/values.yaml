@@ -10,7 +10,7 @@ deploymentStrategy: Recreate
 image:
   # Sonatype Official Public Image
   repository: bigspotteddog/nexus-iq-server
-  tag: 1.146.9
+  tag: 1.146.10
   pullPolicy: IfNotPresent
 imagePullSecrets:
 # for image registries that require login, specify the name of the existing
@@ -138,7 +138,7 @@ affinity: {}
 
 persistence:
   enabled: true
-  accessMode: ReadWriteMany
+  accessMode: ReadWriteOnce
   storageSize: 1Gi
 
   # # If defined, storageClass: <storageClass>
@@ -146,15 +146,15 @@ persistence:
   # # If undefined (the default) or set to null, no storageClass spec is
   # #   set, choosing the default provisioner.  (gp2 on AWS, standard on
   # #   GKE, AWS & OpenStack)
-  storageClass: "efs-cs"
+  # storageClass: "efs-cs"
 
   # # annotations are only applied to persistentVolumeClaim
   # annotations:
   #  "helm.sh/resource-policy": keep
 
   # # For existing PVCs
-  existingClaim: nexus-data-disk
-  existingLogClaim: nexus-log-disk
+  # existingClaim: nexus-data-disk
+  # existingLogClaim: nexus-log-disk
 
   # # persistentVolume settings below here
 
@@ -183,13 +183,13 @@ persistence:
   # # Uncomment the following block if you want to use ANY CSI Storage Driver
   # # The YAML under 'csi:' or 'logCSI:' are taken as you choose to write them in order to support any CSI 
   # # The following is the csi block for the Data PV
-  csi:
-    driver: efs.csi.aws.com
-    volumeHandle: fs-0dfee0fc5d2582355
+  # csi:
+  #   driver: efs.csi.aws.com
+  #   volumeHandle: fs-0dfee0fc5d2582355
   # The following is the csi block for the Log PV
-  logCSI:
-    driver: efs.csi.aws.com
-    volumeHandle: fs-0dfee0fc5d2582355
+  # logCSI:
+  #   driver: efs.csi.aws.com
+  #   volumeHandle: fs-0dfee0fc5d2582355
   
   # # Uncomment the following block if you need PV affinity
   # # The nodeSelectorTerms block is taken as you choose to write it in whole
