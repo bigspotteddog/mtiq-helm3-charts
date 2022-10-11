@@ -18,7 +18,7 @@ spec:
     storage: {{ .Values.persistence.storageSize }}
   persistentVolumeReclaimPolicy: Recycle
   claimRef:
-    namespace: {{ .Release.Namespace }}
+    namespace: {{ .Release.namespace }}
     name: {{ template "iqserver.fullname" . }}-data
 {{- if .Values.persistence.gcePersistentDisk }}
   gcePersistentDisk:
@@ -60,7 +60,7 @@ spec:
     storage: {{ .Values.persistence.storageSize }}
   persistentVolumeReclaimPolicy: Recycle
   claimRef:
-    namespace: {{ .Release.Namespace }}
+    namespace: {{ .Release.namespace }}
     name: {{ template "iqserver.fullname" . }}-log
 {{- if .Values.persistence.gcePersistentDisk }}
   gcePersistentDisk:
