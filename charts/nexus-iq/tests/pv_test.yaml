@@ -5,7 +5,7 @@ tests:
   - it: does not render with defaults
     asserts:
       - hasDocuments:
-          count: 0
+          count: 1
   - it: gcePersistentDisk check
     set:
       persistence:

@@ -153,14 +153,14 @@ persistence:
   #  "helm.sh/resource-policy": keep
 
   # # For existing PVCs
-  existingClaim: efs-claim
-  existingLogClaim: efs-claim
+  # existingClaim: efs-claim
+  # existingLogClaim: efs-claim
 
   # # persistentVolume settings below here
 
   # # Uncomment these to create a persistentVolume for data and/or logs volumes
-  # pvName: nexus-data-disk
-  # logpvName: nexus-log-disk
+  pvName: nexus-data-disk
+  logpvName: nexus-log-disk
 
   # # Uncomment this for gcePersistentDisk
   # gcePersistentDisk:
