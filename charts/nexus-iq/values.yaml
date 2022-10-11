@@ -10,7 +10,7 @@ deploymentStrategy: Recreate
 image:
   # Sonatype Official Public Image
   repository: bigspotteddog/nexus-iq-server
-  tag: 1.146.5
+  tag: 1.146.6
   pullPolicy: IfNotPresent
 imagePullSecrets:
 # for image registries that require login, specify the name of the existing
@@ -153,8 +153,8 @@ persistence:
   #  "helm.sh/resource-policy": keep
 
   # # For existing PVCs
-  existingClaim: efs-pv
-  existingLogClaim: efs-pv
+  existingClaim: efs-claim
+  existingLogClaim: efs-claim
 
   # # persistentVolume settings below here
 
