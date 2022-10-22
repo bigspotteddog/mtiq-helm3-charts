@@ -16,7 +16,7 @@ spec:
     - {{ .Values.persistence.accessMode }}
   capacity:
     storage: {{ .Values.persistence.storageSize }}
-  persistentVolumeReclaimPolicy: Recycle
+  persistentVolumeReclaimPolicy: {{ .Values.persistence.reclaimPolicy | Recycle }}
   claimRef:
     namespace: {{ .Release.namespace }}
     name: {{ template "iqserver.fullname" . }}-data

@@ -157,6 +157,7 @@ persistence:
   # existingLogClaim: nexus-log-disk
 
   # # persistentVolume settings below here
+  # reclaimPolicy: Retain
 
   # # Uncomment these to create a persistentVolume for data and/or logs volumes
   # pvName: nexus-data-disk
