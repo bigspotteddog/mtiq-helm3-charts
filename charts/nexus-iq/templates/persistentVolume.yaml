@@ -1,85 +1,45 @@
-{{- if not .Values.statefulset.enabled }}
-{{- if .Values.persistence.pvName }}
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: jcava-dev-test-11
+
+---
+kind: StorageClass
+apiVersion: storage.k8s.io/v1
+metadata:
+  name: efs-sc
+provisioner: efs.csi.aws.com
+
+---
 apiVersion: v1
 kind: PersistentVolume
 metadata:
   name: {{ .Values.persistence.pvName }}
-  labels:
-{{ include "iqserver.labels" . | indent 4 }}
-    {{- if .Values.iq.extraLabels }}
-      {{- with .Values.iq.extraLabels }}
-        {{ toYaml . | indent 4 }}
-      {{- end }}
-    {{- end }}
 spec:
-  accessModes:
-    - {{ .Values.persistence.accessMode }}
   capacity:
-    storage: {{ .Values.persistence.storageSize }}
-  persistentVolumeReclaimPolicy: {{ .Values.persistence.reclaimPolicy | Recycle }}
-  claimRef:
-    namespace: {{ .Release.namespace }}
-    name: {{ template "iqserver.fullname" . }}-data
-{{- if .Values.persistence.gcePersistentDisk }}
-  gcePersistentDisk:
-    pdName: {{ .Values.persistence.gcePersistentDisk.pdName }}
-    fsType: {{ .Values.persistence.gcePersistentDisk.fsType }}
-{{- end }}
-{{- if .Values.persistence.awsElasticBlockStore }}
-  awsElasticBlockStore:
-    volumeID: {{ .Values.persistence.awsElasticBlockStore.volumeID }}
-    fsType: {{ .Values.persistence.awsElasticBlockStore.fsType }}
-{{- end }}
-{{- if .Values.persistence.csi }}
-  csi: {{ toYaml .Values.persistence.csi | nindent 4 }}
-{{- end }}
-{{- if .Values.persistence.affinity }}
-  nodeAffinity:
-    required:
-      nodeSelectorTerms: {{ toYaml .Values.persistence.affinity.nodeSelectorTerms | nindent 8 }}
-{{- end }}
-{{ end }}
+    storage: 5Gi
+  volumeMode: Filesystem
+  accessModes:
+    - ReadWriteMany
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: efs-sc
+  csi:
+    driver: efs.csi.aws.com
+    volumeHandle: fs-0bce2998fe33f2b1a
 
-{{ if .Values.persistence.logPVName -}}
 ---
 apiVersion: v1
 kind: PersistentVolume
 metadata:
   name: {{ .Values.persistence.logPVName }}
-  labels:
-{{ include "iqserver.labels" . | indent 4 }}
-    {{- if .Values.iq.extraLabels }}
-      {{- with .Values.iq.extraLabels }}
-        {{ toYaml . | indent 4 }}
-      {{- end }}
-    {{- end }}
 spec:
-  accessModes:
-    - {{ .Values.persistence.accessMode }}
   capacity:
-    storage: {{ .Values.persistence.storageSize }}
-  persistentVolumeReclaimPolicy: Recycle
-  claimRef:
-    namespace: {{ .Release.namespace }}
-    name: {{ template "iqserver.fullname" . }}-log
-{{- if .Values.persistence.gcePersistentDisk }}
-  gcePersistentDisk:
-    pdName: {{ .Values.persistence.gcePersistentDisk.logPDName }}
-    fsType: {{ .Values.persistence.gcePersistentDisk.logFSType }}
-{{- end }}
-{{- if .Values.persistence.awsElasticBlockStore }}
-  awsElasticBlockStore:
-    volumeID: {{ .Values.persistence.awsElasticBlockStore.logVolumeID }}
-    fsType: {{ .Values.persistence.awsElasticBlockStore.logFSType }}
-{{- end }}
-{{- if .Values.persistence.logCSI }}
-  csi: {{ toYaml .Values.persistence.logCSI | nindent 4 }}
-{{- end }}
-{{- if .Values.persistence.affinity }}
-  nodeAffinity:
-    required:
-      nodeSelectorTerms: {{ toYaml .Values.persistence.affinity.nodeSelectorTerms | nindent 8 }}
-{{ end }}
-{{ end }}
-{{ end }}
-
+    storage: 5Gi
+  volumeMode: Filesystem
+  accessModes:
+    - ReadWriteMany
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: efs-sc
+  csi:
+    driver: efs.csi.aws.com
+    volumeHandle: fs-0bce2998fe33f2b1a
