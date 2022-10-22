@@ -1,27 +1,26 @@
----
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  name: {{ template "iqserver.fullname" . }}-data
-  namespace: jcava-dev-test-11
-spec:
-  accessModes:
-    - ReadWriteMany
-  storageClassName: efs-sc
-  resources:
-    requests:
-      storage: 5Gi
+# apiVersion: v1
+# kind: PersistentVolumeClaim
+# metadata:
+#   name: nexus-data-disk
+#   namespace: jcava-dev-test-11
+# spec:
+#   accessModes:
+#     - ReadWriteMany
+#   storageClassName: efs-sc
+#   resources:
+#     requests:
+#       storage: 5Gi
 
----
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  name: {{ template "iqserver.fullname" . }}-log
-  namespace: jcava-dev-test-11
-spec:
-  accessModes:
-    - ReadWriteMany
-  storageClassName: efs-sc
-  resources:
-    requests:
-      storage: 5Gi
+# ---
+# apiVersion: v1
+# kind: PersistentVolumeClaim
+# metadata:
+#   name: nexus-log-disk
+#   namespace: jcava-dev-test-11
+# spec:
+#   accessModes:
+#     - ReadWriteMany
+#   storageClassName: efs-sc
+#   resources:
+#     requests:
+#       storage: 5Gi
