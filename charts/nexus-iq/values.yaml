@@ -10,7 +10,7 @@ deploymentStrategy: Recreate
 image:
   # Sonatype Official Public Image
   repository: bigspotteddog/nexus-iq-server
-  tag: 1.146.10
+  tag: 1.146.5
   pullPolicy: IfNotPresent
 imagePullSecrets:
 # for image registries that require login, specify the name of the existing
@@ -137,9 +137,9 @@ tolerations: []
 affinity: {}
 
 persistence:
-  enabled: true
-  accessMode: ReadWriteOnce
-  storageSize: 1Gi
+  enabled: false
+  # accessMode: ReadWriteMany
+  # storageSize: 1Gi
 
   # # If defined, storageClass: <storageClass>
   # # If set to "-", storageClass: "", which disables dynamic provisioning
