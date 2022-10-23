@@ -9,6 +9,7 @@
 # metadata:
 #   name: efs-sc
 # provisioner: efs.csi.aws.com
+# provisioningMode: "efs-ap"
 
 # ---
 # apiVersion: v1
@@ -25,7 +26,7 @@
 #   storageClassName: efs-sc
 #   csi:
 #     driver: efs.csi.aws.com
-#     volumeHandle: fs-0bce2998fe33f2b1a
+#     volumeHandle: fs-0bce2998fe33f2b1a::fsap-07bb805f8b6662060
 
 # ---
 # apiVersion: v1

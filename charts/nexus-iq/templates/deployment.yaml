@@ -39,9 +39,9 @@ spec:
           command: ['sh', '-c', 'chown -R {{ .Values.fixOwner.updateUser }}:{{ .Values.fixOwner.updateGroup }} /var/log/nexus-iq-server {{ .Values.configYaml.sonatypeWork }}']
           volumeMounts:
             - mountPath: {{ .Values.configYaml.sonatypeWork }}
-              name: nxiq-pv-data
+              name: efs-pvc
             - mountPath: /var/log/nexus-iq-server
-              name: nxiq-pv-log
+              name: efs-pvc
             - mountPath: /etc/nexus-iq-server
               name: config-volume
       {{- end }}
