@@ -19,7 +19,7 @@ imagePullSecrets:
 
 # Set fixOwner.enabled to true, when upgrading from IQ versions 1.117 or 1.100, to change file ownership. 
 fixOwner:
-  enabled: false
+  enabled: true
   updateUser: 1000
   updateGroup: 1000
 
