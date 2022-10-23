@@ -82,9 +82,9 @@ spec:
             {{- toYaml .Values.resources | nindent 12 }}
           volumeMounts:
             - mountPath: {{ .Values.configYaml.sonatypeWork }}
-              name: nxiq-pv-data
+              name: efs-pvc
             - mountPath: /var/log/nexus-iq-server
-              name: nxiq-pv-log
+              name: efs-pvc
             - mountPath: /etc/nexus-iq-server
               name: config-volume
   {{- if and (.Values.iq.secretName) (.Values.iq.secretMountName) }}
@@ -97,10 +97,7 @@ spec:
               name: license-volume
   {{- end }}
       volumes:
-        - name: nxiq-pv-data
-          persistentVolumeClaim:
-            claimName: efs-storage-claim
-        - name: nxiq-pv-log
+        - name: efs-pvc
           persistentVolumeClaim:
             claimName: efs-storage-claim
         - name: config-volume
