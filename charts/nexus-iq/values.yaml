@@ -9,7 +9,7 @@ replicaCount: 1
 deploymentStrategy: Recreate
 image:
   # Sonatype Official Public Image
-  repository: sonatype/nexus-iq-server
+  repository: bigspotteddog/nexus-iq-server
   tag: 1.147.10
   pullPolicy: IfNotPresent
 imagePullSecrets:
