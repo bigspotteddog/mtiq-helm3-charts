@@ -37,8 +37,13 @@ iq:
   # secretName: secret-jks
   # secretMountName: /etc/secret-volume
   env:
-    - name: JAVA_OPTS
-      value: "-Djava.util.prefs.userRoot=$(SONATYPE_WORK)/javaprefs"
+    - name: NXIQ_INITIAL_ADMIN_PASSWORD
+      value: <password>
+    - name: NXIQ_ENABLE_UNAUTHENTICATED_PAGES
+      value: "false"
+    - name: MULTI_TENANT
+      value: "true"
+
 # In conjunction with 'secretName' and 'secretMountName' above, this is an example of how to inject required password
 # secrets into the runtime environment, and how to modify the startup of the server to utilize custom Java SSL stores.
 #    - name: TRUSTSTORE_PASSWORD
@@ -84,37 +89,16 @@ serviceAccount:
 # Default the pods UID and GID to match the nexus-iq-server container.
 # Customize or remove these values from the securityContext as appropriate for
 # your deployment environment.
-podSecurityContext:
+securityContext:
+  runAsNonRoot: true
   runAsUser: 1000
   runAsGroup: 1000
+podSecurityContext:
   fsGroup: 1000
-
-securityContext: {}
-#  capabilities:
-#    drop:
-#    - ALL
-#  readOnlyRootFilesystem: true
-#  runAsNonRoot: true
-#  runAsUser: 1000
 
 service:
   type: "ClusterIP"
   port: 80
-
-ingress:
-  enabled: false
-  ingressClassName: nginx
-  annotations:
-    nginx.ingress.kubernetes.io/proxy-body-size: "0"
-  hostUI: iq-server.demo
-  hostUIPath: /
-  hostAdmin: admin.iq-server.demo
-  hostAdminPath: /
-  # tls:
-  #   - secretName: nexus-local-tls
-  #     hosts:
-  #       - iq-server.demo
-  #       - admin.iq-server.demo
 
 resources:
 # We usually recommend not to specify default resources and to leave this as a
@@ -136,81 +120,20 @@ tolerations: []
 
 affinity: {}
 
-# persistence:
-  # enabled: false
-  # accessMode: ReadWriteMany
-  # storageSize: 1Gi
-
-  # # If defined, storageClass: <storageClass>
-  # # If set to "-", storageClass: "", which disables dynamic provisioning
-  # # If undefined (the default) or set to null, no storageClass spec is
-  # #   set, choosing the default provisioner.  (gp2 on AWS, standard on
-  # #   GKE, AWS & OpenStack)
-  # storageClass: "efs-cs"
-
-  # # annotations are only applied to persistentVolumeClaim
-  # annotations:
-  #  "helm.sh/resource-policy": keep
-
-  # # For existing PVCs
-  # existingClaim: nexus-data-disk
-  # existingLogClaim: nexus-log-disk
-
-  # # persistentVolume settings below here
-  # reclaimPolicy: Retain
-
-  # # Uncomment these to create a persistentVolume for data and/or logs volumes
-  # pvName: nexus-data-disk
-  # logpvName: nexus-log-disk
-
-  # # Uncomment this for gcePersistentDisk
-  # gcePersistentDisk:
-  # # Uncomment the next two lines if you want to use an existing GCE PersistentDisk for IQ Data.
-  #   pdName: nexus-data-disk
-  #   fsType: ext4
-  # # Uncomment the next two lines if you want to use an existing GCE PersistentDisk for IQ Logs.
-  #   logpdName: nexus-log-disk
-  #   logfsType: ext4
-
-  # #Uncomment the following section for using an existing AWS EBS Volume for data and/or logs
-  # awsElasticBlockStore:
-  #   # Uncomment the next two lines if you want to use an existing AWS EBS Volume for IQ Data.
-  #   volumeID: vol-xxxxxxxxxxxxxxxxx
-  #   fsType: ext4
-  #   # Uncomment the next two lines if you want to use an existing AWS EBS Volume for IQ Data.
-  #   logvolumeID: vol-xxxxxxxxxxxxxxxxx
-  #   logfsType: ext4
-
-  # # Uncomment the following block if you want to use ANY CSI Storage Driver
-  # # The YAML under 'csi:' or 'logCSI:' are taken as you choose to write them in order to support any CSI 
-  # # The following is the csi block for the Data PV
-  # csi:
-  #   driver: efs.csi.aws.com
-  #   volumeHandle: fs-0dfee0fc5d2582355
-  # The following is the csi block for the Log PV
-  # logCSI:
-  #   driver: efs.csi.aws.com
-  #   volumeHandle: fs-0dfee0fc5d2582355
-  
-  # # Uncomment the following block if you need PV affinity
-  # # The nodeSelectorTerms block is taken as you choose to write it in whole
-  # affinity:
-  #   nodeSelectorTerms:
-  #     - matchExpressions:
-  #           - key: topology.ebs.csi.aws.com/zone
-  #             operator: In
-  #             values:
-  #               - us-east-2a
-  
-
 # configYaml is the full text of the config.yml file that will be passed to IQ Server
 configYaml:
-  baseUrl: http://iq-server.demo
+  baseUrl: https://lifecycle-saas.sonatype.com
+  initialAdminPassword: <password>
   sonatypeWork: /sonatype-work
   licenseFile: /etc/nexus-iq-license/license_lic
-  initialAdminPassword: admin123
   features:
-    enableUnauthenticatedPages: true
+    enableUnauthenticatedPages: false
+  database:
+    type: postgresql
+    hostname: mtiq-aurora-db.cluster-ckxkxl7a0st8.us-east-2.rds.amazonaws.com
+    name: lifecycle-saas
+    username: root
+    password: <password>
   server:
     applicationConnectors:
       - type: http
@@ -229,7 +152,6 @@ configYaml:
           logFormat: "%clientHost %l %user [%date] \"%requestURL\" %statusCode %bytesSent %elapsedTime \"%header{User-Agent}\""
           archivedLogFilenamePattern: /var/log/nexus-iq-server/request-%d.log.gz
           archivedFileCount: 50
-
   createSampleData: true
 
   logging:
@@ -283,3 +205,15 @@ configYaml:
         currentLogFilename: /var/log/nexus-iq-server/clm-server.log
         archivedLogFilenamePattern: /var/log/nexus-iq-server/clm-server-%d.log.gz
         archivedFileCount: 50
+ingress:
+  enabled: true
+  annotations:
+    alb.ingress.kubernetes.io/scheme: internet-facing
+    alb.ingress.kubernetes.io/target-type: ip
+    alb.ingress.kubernetes.io/success-codes: 200-303
+    alb.ingress.kubernetes.io/ssl-policy: ELBSecurityPolicy-FS-1-2-Res-2020-10
+  hostUI: lifecycle-saas.sonatype.com
+  hostUIPath: /
+  hostAdmin: lifecycle-saas-admin.sonatype.com
+  hostAdminPath: /
+  ingressClassName: alb
