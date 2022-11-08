@@ -38,7 +38,7 @@ iq:
   # secretMountName: /etc/secret-volume
   env:
     - name: NXIQ_INITIAL_ADMIN_PASSWORD
-      value: <password>
+      value: "admin123"
     - name: NXIQ_ENABLE_UNAUTHENTICATED_PAGES
       value: "false"
     - name: MULTI_TENANT
@@ -122,18 +122,19 @@ affinity: {}
 
 # configYaml is the full text of the config.yml file that will be passed to IQ Server
 configYaml:
-  baseUrl: https://lifecycle-saas.sonatype.com
-  initialAdminPassword: <password>
+  baseUrl: https://staging.mtiq.cloudy.sonatype.dev
+  initialAdminPassword: admin123
   sonatypeWork: /sonatype-work
-  licenseFile: /etc/nexus-iq-license/license_lic
+  clusterDirectory: /sonatype-work/clm-cluster
+  licenseFile: /sonatype-work/clustered.lic
   features:
     enableUnauthenticatedPages: false
   database:
     type: postgresql
-    hostname: mtiq-aurora-db.cluster-ckxkxl7a0st8.us-east-2.rds.amazonaws.com
-    name: lifecycle-saas
+    hostname: mtiq-prod-db-instance-1.ckxkxl7a0st8.us-east-2.rds.amazonaws.com
+    name: nexus_iq_server
     username: root
-    password: <password>
+    password: BRz6RRkbMS
   server:
     applicationConnectors:
       - type: http
@@ -207,13 +208,3 @@ configYaml:
         archivedFileCount: 50
 ingress:
   enabled: true
-  annotations:
-    alb.ingress.kubernetes.io/scheme: internet-facing
-    alb.ingress.kubernetes.io/target-type: ip
-    alb.ingress.kubernetes.io/success-codes: 200-303
-    alb.ingress.kubernetes.io/ssl-policy: ELBSecurityPolicy-FS-1-2-Res-2020-10
-  hostUI: lifecycle-saas.sonatype.com
-  hostUIPath: /
-  hostAdmin: lifecycle-saas-admin.sonatype.com
-  hostAdminPath: /
-  ingressClassName: alb

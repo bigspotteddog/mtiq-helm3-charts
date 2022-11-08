@@ -25,6 +25,7 @@ spec:
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
     {{- end }}
+      serviceAccount: mtiq-staging-sa
       serviceAccountName: {{ include "iqserver.serviceAccountName" . }}
       securityContext:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
@@ -39,9 +40,9 @@ spec:
           command: ['sh', '-c', 'chown -R {{ .Values.fixOwner.updateUser }}:{{ .Values.fixOwner.updateGroup }} /var/log/nexus-iq-server {{ .Values.configYaml.sonatypeWork }}']
           volumeMounts:
             - mountPath: {{ .Values.configYaml.sonatypeWork }}
-              name: efs-pvc
+              name: efs-pv-mtiq-staging
             - mountPath: /var/log/nexus-iq-server
-              name: efs-pvc
+              name: efs-pv-mtiq-staging
             - mountPath: /etc/nexus-iq-server
               name: config-volume
       {{- end }}
@@ -61,30 +62,13 @@ spec:
             - name: application
               containerPort: {{ .Values.iq.applicationPort }}
               protocol: TCP
-            - name: admin
-              containerPort: {{ .Values.iq.adminPort }}
-              protocol: TCP
-          livenessProbe:
-            httpGet:
-              path: /ping
-              port: admin
-              {{- if .Values.iq.livenessProbe }}
-                {{- toYaml .Values.iq.livenessProbe | nindent 12 }}
-              {{- end }}
-          readinessProbe:
-            httpGet:
-              path: /
-              port: application
-              {{- if .Values.iq.livenessProbe }}
-                {{- toYaml .Values.iq.readinessProbe | nindent 12 }}
-              {{- end }}
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
           volumeMounts:
             - mountPath: {{ .Values.configYaml.sonatypeWork }}
-              name: efs-pvc
+              name: efs-pv-mtiq-staging
             - mountPath: /var/log/nexus-iq-server
-              name: efs-pvc
+              name: efs-pv-mtiq-staging
             - mountPath: /etc/nexus-iq-server
               name: config-volume
   {{- if and (.Values.iq.secretName) (.Values.iq.secretMountName) }}
@@ -97,9 +81,10 @@ spec:
               name: license-volume
   {{- end }}
       volumes:
-        - name: efs-pvc
+        - name: efs-pv-mtiq-staging
           persistentVolumeClaim:
             claimName: efs-storage-claim
+            claimName: mtiq-staging-pvc
         - name: config-volume
           configMap:
             name: {{ template "iqserver.fullname" . }}-conf

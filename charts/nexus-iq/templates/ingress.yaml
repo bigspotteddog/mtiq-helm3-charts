@@ -1,55 +1,52 @@
-{{- if .Values.ingress.enabled -}}
-{{- $fullName := include "iqserver.fullname" . -}}
-{{- $svcPort := .Values.service.port -}}
-{{- $ingressPath := .Values.ingress.path -}}
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: {{ $fullName }}
+  name: nexus-iq-server
   labels:
-    {{- include "iqserver.labels" . | nindent 4 }}
-    {{- if .Values.iq.extraLabels }}
-      {{- with .Values.iq.extraLabels }}
-        {{ toYaml . | indent 4 }}
-      {{- end }}
-    {{- end }}
-  {{- with .Values.ingress.annotations }}
+    app.kubernetes.io/name: nexus-iq-server
+    helm.sh/chart: nexus-iq-server-148.0.8
+    app.kubernetes.io/instance: nexus-iq-server
+    app.kubernetes.io/version: "1.148.8"
+    app.kubernetes.io/managed-by: Helm
   annotations:
-    {{- toYaml . | nindent 4 }}
-  {{- end }}
-spec:
-  {{- if .Values.ingress.ingressClassName }}
-  ingressClassName: {{ .Values.ingress.ingressClassName }}
-  {{- end }}
-  {{- if .Values.ingress.tls }}
-  tls:
-    {{- range .Values.ingress.tls }}
-    - hosts:
-      {{- range .hosts }}
-      - {{ . | quote }}
-      {{- end }}
-      secretName: {{ .secretName }}
-    {{- end }}
-  {{- end }}
+    alb.ingress.kubernetes.io/actions.redirect-bug-fix: >-
+      {"Type":"redirect","RedirectConfig":{"host":"staging.mtiq.sonatype.dev","path":"/bug_fix_rate","Port":"443","Protocol":"HTTPS","Query":"#{query}","StatusCode":"HTTP_302"}}
+    alb.ingress.kubernetes.io/actions.redirect-cloudy: >-
+      {"Type":"redirect","RedirectConfig":{"Host":"staging.mtiq.sonatype.dev","Path":"/#{path}","Port":"443","Protocol":"HTTPS","Query":"#{query}","StatusCode":"HTTP_301"}}
+    alb.ingress.kubernetes.io/actions.response-404: >-
+      {"type":"fixed-response","fixedResponseConfig":{"contentType":"text/plain","statusCode":"404","messageBody":"404
+      Not Found"}}
+    alb.ingress.kubernetes.io/actions.ssl-redirect: >-
+      {"Type": "redirect", "RedirectConfig": { "Protocol": "HTTPS", "Port":
+      "443", "StatusCode": "HTTP_301"}}
+    alb.ingress.kubernetes.io/listen-ports: '[{"HTTPS":80}, {"HTTPS":443}]'
+    alb.ingress.kubernetes.io/certificate-arn: >-
+      arn:aws:acm:us-east-2:119982741445:certificate/34da9bec-fe3a-4079-b69c-44c065823556
+    alb.ingress.kubernetes.io/load-balancer-attributes: idle_timeout.timeout_seconds=600
+    alb.ingress.kubernetes.io/scheme: internal
+    alb.ingress.kubernetes.io/ssl-policy: ELBSecurityPolicy-FS-1-2-Res-2020-10
+    alb.ingress.kubernetes.io/target-type: ip
+    external-dns.alpha.kubernetes.io/hostname: "staging.mtiq.cloudy.sonatype.dev,*.staging.mtiq.cloudy.sonatype.dev"
+    kubernetes.io/ingress.class: alb
+spec:  
   rules:
-    - host: {{ .Values.ingress.hostUI }}
-      http:
-        paths:
-          - path: {{ .Values.ingress.hostUIPath }}
-            pathType: Prefix
-            backend:
-              service:
-                name: {{ $fullName }}
-                port:
-                  number: 8070
-    - host: {{ .Values.ingress.hostAdmin }}
-      http:
-        paths:
-          - path: {{ .Values.ingress.hostAdminPath }}
-            pathType: Prefix
-            backend:
-              service:
-                name: {{ $fullName }}
-                port:
-                  number: 8071
-{{- end }}
+  - host: "*.staging.mtiq.cloudy.sonatype.dev"
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: nexus-iq-server
+            port:
+              number: 8070
+  - host: "staging.mtiq.cloudy.sonatype.dev"
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: nexus-iq-server
+            port:
+              number: 8070
