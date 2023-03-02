@@ -8,7 +8,7 @@ entries:
       supply chain
     digest: d4edeb783100912e777c51b5a9e5f38dd5110de634f0e9786fbb79fd9d28a7ba
     home: https://www.sonatype.com/product-nexus-lifecycle
-    icon: https://bigspotteddog.github.io/helm3-charts/NexusIQServer_Vertical.svg
+    icon: https://bigspotteddog.github.io/mtiq-helm3-charts/NexusIQServer_Vertical.svg
     keywords:
     - sonatype
     - nexus
@@ -23,7 +23,7 @@ entries:
     name: nexus-iq-server
     type: application
     urls:
-    - https://bigspotteddog.github.io/helm3-charts/nexus-iq-server-148.0.8.tgz
+    - https://bigspotteddog.github.io/mtiq-helm3-charts/nexus-iq-server-148.0.8.tgz
     version: 148.0.8
   - apiVersion: v2
     appVersion: 1.148.4
